@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "270829888632",
+    "firebase_url": "https://mes-app-12c23-default-rtdb.firebaseio.com",
+    "project_id": "mes-app-12c23",
+    "storage_bucket": "mes-app-12c23.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:270829888632:android:327970b54751bd4a79798d",
+        "android_client_info": {
+          "package_name": "com.app.mes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSLolKD67Y1ZfQpCAV4qPzmpvjqGXQJvo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
