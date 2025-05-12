@@ -50,6 +50,8 @@ dependencies {
     
     // Circle ImageView
     implementation("de.hdodenhof:circleimageview:3.1.0")
+
+    implementation ("com.cloudinary:cloudinary-android:2.1.0")
     
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
