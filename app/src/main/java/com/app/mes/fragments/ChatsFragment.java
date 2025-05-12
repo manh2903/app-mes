@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.app.mes.ChatActivity;
+import com.app.mes.CreateGroupActivity;
 import com.app.mes.adapters.ChatAdapter;
 import com.app.mes.databinding.FragmentChatsBinding;
 import com.app.mes.models.Chat;
@@ -66,6 +67,12 @@ public class ChatsFragment extends Fragment {
         });
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerView.setAdapter(chatAdapter);
+
+        // Thêm xử lý sự kiện cho nút tạo nhóm
+        binding.fabCreateGroup.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), CreateGroupActivity.class);
+            startActivity(intent);
+        });
 
         readAllChatsAndGroups();
 

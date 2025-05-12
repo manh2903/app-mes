@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.app.mes.adapters.MessageAdapter;
 import com.app.mes.databinding.ActivityChatBinding;
+import com.app.mes.helper.UploadHelper;
 import com.app.mes.models.Chat;
 import com.app.mes.models.Message;
 import com.app.mes.models.User;
@@ -100,42 +101,38 @@ public class ChatActivity extends AppCompatActivity {
 
     private void uploadImage(Uri imageUri) {
         if (auth.getCurrentUser() != null) {
-            String messageId = UUID.randomUUID().toString();
-            StorageReference fileReference = storageReference.child(messageId + ".jpg");
-            fileReference.putFile(imageUri)
-                    .addOnSuccessListener(taskSnapshot -> {
-                        fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
-                            String imageUrl = uri.toString();
-                            sendImageMessage(imageUrl);
-                        });
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    });
-        }
-    }
+            String messageId = databaseReference.push().getKey();
+            if (messageId != null) {
+                UploadHelper.uploadImage(imageUri, "chat_images", messageId, new UploadHelper.UploadCallbackListener() {
+                    @Override
+                    public void onSuccess(String imageUrl) {
+                        Message message = new Message(
+                                messageId,
+                                auth.getCurrentUser().getUid(),
+                                receiverId,
+                                "",
+                                imageUrl
+                        );
+                        databaseReference.child("Messages")
+                                .child(messageId)
+                                .setValue(message)
+                                .addOnSuccessListener(aVoid -> {
+                                    binding.messageInput.setText("");
+                                    Toast.makeText(ChatActivity.this, "Gửi ảnh thành công", Toast.LENGTH_SHORT).show();
+                                    // Cập nhật thông tin chat sau khi gửi ảnh thành công
+                                    updateChat(message);
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(ChatActivity.this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
+                    }
 
-    private void sendImageMessage(String imageUrl) {
-        if (auth.getCurrentUser() != null) {
-            String messageId = UUID.randomUUID().toString();
-            Message message = new Message(
-                    messageId,
-                    auth.getCurrentUser().getUid(),
-                    receiverId,
-                    "",
-                    imageUrl
-            );
-
-            databaseReference.child("Messages")
-                    .child(messageId)
-                    .setValue(message)
-                    .addOnSuccessListener(aVoid -> {
-                        // Update last message in chat
-                        updateChat(message);
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    });
+                    @Override
+                    public void onError(String error) {
+                        Toast.makeText(ChatActivity.this, "Lỗi: " + error, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         }
     }
 
