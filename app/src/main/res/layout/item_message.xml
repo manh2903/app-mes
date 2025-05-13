@@ -3,70 +3,87 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp">
+    android:padding="4dp">
 
-    <!-- Avatar cho tin nhắn nhận -->
+    <!-- Tin nhắn nhận -->
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/receivedAvatar"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:src="@drawable/default_avatar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginEnd="4dp" />
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp" />
 
-    <!-- Container cho tin nhắn nhận -->
+    <TextView
+        android:id="@+id/senderName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="@color/gray"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="2dp"
+        app:layout_constraintStart_toEndOf="@id/receivedAvatar"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone" />
+
     <androidx.cardview.widget.CardView
         android:id="@+id/receivedMessageContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        app:cardBackgroundColor="@android:color/darker_gray"
-        app:cardCornerRadius="12dp"
+        android:layout_marginEnd="64dp"
+        app:cardBackgroundColor="#F0F0F0"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
         app:layout_constraintStart_toEndOf="@id/receivedAvatar"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/senderName">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="8dp">
+            android:padding="12dp">
 
             <TextView
                 android:id="@+id/receivedMessageText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/receivedMessageTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:textColor="@android:color/white"
-                android:textSize="12sp"
-                android:alpha="0.7" />
+                android:textColor="@color/black"
+                android:textSize="15sp" />
 
             <ImageView
                 android:id="@+id/receivedMessageImage"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
                 android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
                 android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/receivedMessageTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/gray"
+                android:textSize="11sp" />
 
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 
-    <!-- Container cho tin nhắn gửi -->
+    <!-- Tin nhắn gửi -->
     <androidx.cardview.widget.CardView
         android:id="@+id/messageContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
         android:layout_marginEnd="8dp"
-        app:cardBackgroundColor="@android:color/holo_blue_light"
-        app:cardCornerRadius="12dp"
+        app:cardBackgroundColor="@color/teal_200"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -74,30 +91,32 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="8dp">
+            android:padding="12dp">
 
             <TextView
                 android:id="@+id/messageText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/messageTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:textColor="@android:color/white"
-                android:textSize="12sp"
-                android:alpha="0.7" />
+                android:textColor="@color/white"
+                android:textSize="15sp" />
 
             <ImageView
                 android:id="@+id/messageImage"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
                 android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
                 android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/messageTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/white"
+                android:textSize="11sp"
+                android:alpha="0.8" />
 
         </LinearLayout>
 

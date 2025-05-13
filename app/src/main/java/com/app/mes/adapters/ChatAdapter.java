@@ -1,6 +1,7 @@
 package com.app.mes.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -48,7 +49,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         if (item.getType() == ChatListItem.TYPE_CHAT) {
             Chat chat = item.getChat();
             holder.binding.username.setText(chat.getName());
-            holder.binding.lastMessage.setText(chat.getLastMessage());
+            Log.d("ChatAdapter", "Last message: " + chat.getLastMessage().equals(""));
+            holder.binding.lastMessage.setText(chat.getLastMessage().equals("") ? "Hình ảnh" : chat.getLastMessage());
             holder.binding.messageTime.setText(dateFormat.format(new Date(chat.getLastMessageTime())));
             if (chat.getAvatar() != null && !chat.getAvatar().isEmpty()) {
                 Glide.with(context)
@@ -60,7 +62,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         } else if (item.getType() == ChatListItem.TYPE_GROUP) {
             Group group = item.getGroup();
             holder.binding.username.setText(group.getGroupName());
-            holder.binding.lastMessage.setText(group.getLastMessage());
+            holder.binding.lastMessage.setText(group.getLastMessage().equals("") ? "Hình ảnh" : group.getLastMessage());
             holder.binding.messageTime.setText(dateFormat.format(new Date(group.getLastMessageTime())));
             if (group.getGroupAvatar() != null && !group.getGroupAvatar().isEmpty() && !group.getGroupAvatar().equals("default")) {
                 Glide.with(context)

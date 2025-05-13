@@ -8,6 +8,8 @@ public class Message {
     private String imageUrl;
     private long timestamp;
     private boolean seen;
+    private String senderName;
+    private String senderAvatar;
 
     public Message() {
         // Required empty constructor for Firebase
@@ -77,5 +79,21 @@ public class Message {
 
     public void setSeen(boolean seen) {
         this.seen = seen;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    public String getSenderAvatar() {
+        return senderAvatar;
+    }
+
+    public void setSenderAvatar(String senderAvatar) {
+        this.senderAvatar = senderAvatar;
     }
 } 

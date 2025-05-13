@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.app.mes.ChatActivity;
 import com.app.mes.CreateGroupActivity;
+import com.app.mes.GroupChatActivity;
 import com.app.mes.adapters.ChatAdapter;
 import com.app.mes.databinding.FragmentChatsBinding;
 import com.app.mes.models.Chat;
@@ -38,6 +39,7 @@ public class ChatsFragment extends Fragment {
     private FirebaseAuth auth;
     private DatabaseReference chatsRef;
     private DatabaseReference groupsRef;
+    private DatabaseReference usersRef;
     private ValueEventListener chatListener;
     private ValueEventListener groupListener;
 
@@ -49,20 +51,40 @@ public class ChatsFragment extends Fragment {
         auth = FirebaseAuth.getInstance();
         chatsRef = FirebaseDatabase.getInstance().getReference("Chats");
         groupsRef = FirebaseDatabase.getInstance().getReference("Groups");
+        usersRef = FirebaseDatabase.getInstance().getReference("Users");
         itemList = new ArrayList<>();
+
+        // Hiển thị loading khi bắt đầu
+        showLoading();
 
         chatAdapter = new ChatAdapter(getContext(), itemList, item -> {
             if (item.getType() == ChatListItem.TYPE_CHAT) {
                 Chat chat = item.getChat();
-                Intent intent = new Intent(getContext(), ChatActivity.class);
-                intent.putExtra("userId", chat.getUserId());
-                intent.putExtra("userName", chat.getName());
-                intent.putExtra("userAvatar", chat.getAvatar());
-                startActivity(intent);
+                // Lấy thông tin avatar từ node Users
+                usersRef.child(chat.getUserId())
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                User user = snapshot.getValue(User.class);
+                                if (user != null) {
+                                    Intent intent = new Intent(getContext(), ChatActivity.class);
+                                    intent.putExtra("userId", chat.getUserId());
+                                    intent.putExtra("userName", chat.getName());
+                                    intent.putExtra("userAvatar", user.getAvatar());
+                                    startActivity(intent);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Toast.makeText(getContext(), "Lỗi: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
             } else if (item.getType() == ChatListItem.TYPE_GROUP) {
                 Group group = item.getGroup();
-                // TODO: Mở GroupChatActivity
-                Toast.makeText(getContext(), "Mở chat nhóm: " + group.getGroupName(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getContext(), GroupChatActivity.class);
+                intent.putExtra("groupId", group.getGroupId());
+                startActivity(intent);
             }
         });
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -77,6 +99,51 @@ public class ChatsFragment extends Fragment {
         readAllChatsAndGroups();
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        reloadData();
+    }
+
+    private void reloadData() {
+        if (auth.getCurrentUser() == null) return;
+        
+        // Xóa listeners cũ nếu có
+        if (chatListener != null) {
+            chatsRef.removeEventListener(chatListener);
+        }
+        if (groupListener != null) {
+            groupsRef.removeEventListener(groupListener);
+        }
+
+        // Hiển thị loading
+        showLoading();
+        
+        // Xóa danh sách cũ
+        itemList.clear();
+        if (chatAdapter != null) {
+            chatAdapter.updateItems(itemList);
+        }
+
+        // Đọc lại dữ liệu
+        readAllChatsAndGroups();
+    }
+
+    private void showLoading() {
+        if (binding != null) {
+            binding.progressBar.setVisibility(View.VISIBLE);
+            binding.recyclerView.setVisibility(View.GONE);
+            binding.emptyView.setVisibility(View.GONE);
+        }
+    }
+
+    private void hideLoading() {
+        if (binding != null) {
+            binding.progressBar.setVisibility(View.GONE);
+            binding.recyclerView.setVisibility(View.VISIBLE);
+        }
     }
 
     private void readAllChatsAndGroups() {
@@ -102,6 +169,7 @@ public class ChatsFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 if (!isAdded()) return;
+                hideLoading();
                 Toast.makeText(getContext(), "Lỗi: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         };
@@ -127,6 +195,7 @@ public class ChatsFragment extends Fragment {
                     return Long.compare(t2, t1);
                 });
                 chatAdapter.updateItems(itemList);
+                hideLoading();
                 if (binding != null) {
                     if (itemList.isEmpty()) {
                         binding.emptyView.setVisibility(View.VISIBLE);
@@ -138,7 +207,9 @@ public class ChatsFragment extends Fragment {
                 }
             }
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
+            public void onCancelled(@NonNull DatabaseError error) {
+                hideLoading();
+            }
         };
         groupsRef.addListenerForSingleValueEvent(groupListener);
     }

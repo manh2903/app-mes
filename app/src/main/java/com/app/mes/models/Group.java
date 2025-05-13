@@ -12,13 +12,13 @@ public class Group {
 
     public Group() {}
 
-    public Group(String groupId, String groupName, String groupAvatar, List<String> memberIds) {
+    public Group(String groupId, String groupName, String groupAvatar, List<String> memberIds, long currentTime) {
         this.groupId = groupId;
         this.groupName = groupName;
         this.groupAvatar = groupAvatar;
         this.memberIds = memberIds;
         this.lastMessage = "";
-        this.lastMessageTime = 0;
+        this.lastMessageTime = currentTime;
     }
 
     public String getGroupId() { return groupId; }

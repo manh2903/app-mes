@@ -69,14 +69,24 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             holder.binding.receivedMessageText.setText(message.getMessage());
             holder.binding.receivedMessageTime.setText(time);
             holder.binding.receivedAvatar.setVisibility(ViewGroup.VISIBLE);
-            // Hiển thị avatar người nhận
-            if (receiverAvatarUrl != null && !receiverAvatarUrl.equals("default") && !receiverAvatarUrl.isEmpty()) {
+
+            // Hiển thị avatar người gửi
+            if (receiverAvatarUrl != null && !receiverAvatarUrl.isEmpty()) {
                 Glide.with(holder.itemView.getContext())
                         .load(receiverAvatarUrl)
+                        .into(holder.binding.receivedAvatar);
+            } else if (message.getSenderAvatar() != null && !message.getSenderAvatar().equals("default") && !message.getSenderAvatar().isEmpty()) {
+                Glide.with(holder.itemView.getContext())
+                        .load(message.getSenderAvatar())
                         .into(holder.binding.receivedAvatar);
             } else {
                 holder.binding.receivedAvatar.setImageResource(com.app.mes.R.drawable.default_avatar);
             }
+
+            // Hiển thị tên người gửi
+            holder.binding.senderName.setVisibility(ViewGroup.VISIBLE);
+            holder.binding.senderName.setText(message.getSenderName());
+
             // Ẩn container tin nhắn gửi
             holder.binding.messageContainer.setVisibility(ViewGroup.GONE);
         }

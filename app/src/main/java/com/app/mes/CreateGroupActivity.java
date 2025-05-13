@@ -1,6 +1,7 @@
 package com.app.mes;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -84,8 +85,8 @@ public class CreateGroupActivity extends AppCompatActivity {
 
                                         @Override
                                         public void onCancelled(@NonNull DatabaseError error) {
-                                            Toast.makeText(CreateGroupActivity.this, 
-                                                "Lỗi: " + error.getMessage(), 
+                                            Toast.makeText(CreateGroupActivity.this,
+                                                "Lỗi: " + error.getMessage(),
                                                 Toast.LENGTH_SHORT).show();
                                         }
                                     });
@@ -94,8 +95,8 @@ public class CreateGroupActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(CreateGroupActivity.this, 
-                            "Lỗi: " + error.getMessage(), 
+                        Toast.makeText(CreateGroupActivity.this,
+                            "Lỗi: " + error.getMessage(),
                             Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -106,11 +107,12 @@ public class CreateGroupActivity extends AppCompatActivity {
         List<String> selectedIds = userSelectAdapter.getSelectedUserIds();
         selectedIds.add(auth.getCurrentUser().getUid()); // Thêm chính mình vào nhóm
         if (groupName.isEmpty() || selectedIds.size() < 3) {
-            Toast.makeText(this, "Nhập tên nhóm và chọn ít nhất 3 thành viên!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Nhập tên nhóm và chọn ít nhất 2 thành viên!", Toast.LENGTH_SHORT).show();
             return;
         }
         String groupId = UUID.randomUUID().toString();
-        Group group = new Group(groupId, groupName, "default", selectedIds);
+        long currentTime = System.currentTimeMillis();
+        Group group = new Group(groupId, groupName, "default", selectedIds, currentTime);
         databaseReference.child("Groups")
                 .child(groupId)
                 .setValue(group)
@@ -122,4 +124,4 @@ public class CreateGroupActivity extends AppCompatActivity {
                     Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
-} 
+}
